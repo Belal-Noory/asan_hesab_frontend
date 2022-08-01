@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef, useContext } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import classNames from "classnames";
-import { Route, useLocation, Switch, Redirect, useHistory } from "react-router-dom";
+import { Route, useLocation, Redirect, useHistory } from "react-router-dom";
 import { CSSTransition } from "react-transition-group";
 
 import { AppTopbar } from "./AppTopbar";
@@ -271,7 +271,6 @@ const App = () => {
                             <WithdrawState>
                                 <div className="layout-main-container">
                                     <div className="layout-main">
-                                        <Switch>
                                             <PrivateRoute  path="/" exact authed={login.success} component={Dashboard} />
                                             {/* Customer */}
                                             <PrivateRoute  path="/customers" authed={login.success} exact component={Customers} />
@@ -297,7 +296,6 @@ const App = () => {
                                             <PrivateRoute  path="/withdraws" authed={login.success} exact component={Withdraw} />
                                             {/* login */}
                                             <Route path="/login" exact component={Login} />
-                                        </Switch>
                                     </div>
                                     <AppFooter hide={!login.success ? "hide" : ""} layoutColorMode={layoutColorMode} />
                                 </div>
