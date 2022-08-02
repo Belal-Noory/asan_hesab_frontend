@@ -31,9 +31,11 @@ function Shareholders() {
 
     // call customer context to run get all customers function to fetch customers from database
     useEffect(() => {
-        getHolders();
-        // eslint-disable-next-line
-        setloader(false);
+        const getData = async () => {
+            await getHolders();
+            setloader(false);
+        };
+        getData();
     }, []);
 
     const openNew = () => {
@@ -119,6 +121,7 @@ function Shareholders() {
                         size="small"
                         scrollHeight="460px"
                         filterDisplay="menu"
+                        loading={loader}
                     >
                         <Column field="name" header="شریک" sortable className="text-right" filter filterPlaceholder="جستجو"></Column>
                         <Column field="capital" header="سهم" sortable className="text-right"></Column>

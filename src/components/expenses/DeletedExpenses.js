@@ -22,9 +22,12 @@ function DeletedExpenses() {
 
     // call customer context to run get all customers function to fetch customers from database
     useEffect(() => {
-        getDeletedExpenses();
-        setLoading1(false);
-        setloader(false);
+        const getData = async () => {
+            await getDeletedExpenses();
+            setLoading1(false);
+            setloader(false);
+        };
+        getData();
     }, [undoDeletedExpense]);
 
     const clearFilter1 = () => {

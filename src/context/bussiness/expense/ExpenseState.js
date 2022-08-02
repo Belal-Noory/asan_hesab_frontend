@@ -102,48 +102,23 @@ const ExpenseState = (props) => {
     };
 
     // Edit Customer
-    const editExpense = async (id, customer, date, details, amount, type, kind, status) => {
+    const editExpense = async (id, user, date, details, amount, kind) => {
         // call API to update the customer in the database
-        await fetch(`${host}/update/${id}`, {
+        const res = await fetch(`${host}/update/${id}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
                 "auth-token": toekn,
             },
             body: JSON.stringify({
-                customer: customer,
+                user: user,
                 details: details,
                 amount: amount,
-                type: type,
                 date: date,
                 kind: kind,
-                status: status,
             }),
         });
-        // find the customer that needs to be updated from customers list
-        let updateCustomer = allExpense.filter((customer) => {
-            return customer._id === id;
-        });
-
-        // update the filtered customer
-        updateCustomer._id = id;
-        updateCustomer.customer = customer;
-        updateCustomer.details = details;
-        updateCustomer.amount = amount;
-        updateCustomer.type = type;
-        updateCustomer.date = date;
-        updateCustomer.kind = kind;
-        updateCustomer.status = status;
-        // get all customers except the updated one
-        const newCustomerList = allExpense.filter((customer) => {
-            return customer._id !== id;
-        });
-
-        // bind tow list and set it as customer list
-        const updatedCustomerList = newCustomerList.concat(updateCustomer);
-
-        // update customer status
-        setallExpense(updatedCustomerList);
+        getExpenses();
     };
 
     return <expenseContext.Provider value={{ allExpense, getExpenses, getDeletedExpenses, addExpense, deleteExpense, undoDeletedExpense, editExpense }}>{props.children}</expenseContext.Provider>;

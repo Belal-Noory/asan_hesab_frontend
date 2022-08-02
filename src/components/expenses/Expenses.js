@@ -20,7 +20,7 @@ function Expenses() {
 
     const [loading1, setLoading1] = useState(true);
     const [transactionDialog, setTransactionDialog] = useState(false);
-    const [transaction, setTransaction] = useState({ _id: "", user: "", date: "", details: "", kind: "", amount: "", status: "" });
+    const [transaction, setTransaction] = useState({ _id: "", user: "", date: "", details: "", kind: "", amount: "" });
     const [deleteProductDialog, setDeleteProductDialog] = useState(false);
     const [submitted, setSubmitted] = useState(false);
     const [loader, setloader] = useState(true);
@@ -29,10 +29,13 @@ function Expenses() {
 
     // call customer context to run get all customers function to fetch customers from database
     useEffect(() => {
-        getExpenses();
-        setLoading1(false);
-        setloader(false);
-    }, [addExpense, deleteExpense, editExpense]);
+        const getData = async () => {
+            await getExpenses();
+            setloader(false);
+            setLoading1(false);
+        };
+        getData();
+    }, []);
 
     const formateDate = (rowData) => {
         return Moment(new Date(rowData.date)).format("DD/MM/YYYY");
@@ -46,7 +49,7 @@ function Expenses() {
             date: customer.date,
             details: customer.details,
             amount: customer.amount,
-            type: customer.type,
+            kind: customer.kind,
         }));
         setTransactionDialog(true);
     };
@@ -86,11 +89,11 @@ function Expenses() {
     const saveProduct = () => {
         setSubmitted(true);
         if (transaction._id) {
-            editExpense(transaction._id, transaction.date, transaction.details, transaction.amount, transaction.type, transaction.kind, transaction.status);
+            editExpense(transaction._id, transaction.user, transaction.date, transaction.details, transaction.amount, transaction.kind);
             toast.current.show({ severity: "success", summary: "توجه", detail: "موفقانه اجرا شد", life: 3000 });
         } else {
             if (!Object.values(transaction).every((x) => x === null || x === "" || x === 0)) {
-                const res = addExpense(transaction.date, transaction.details, transaction.amount, transaction.kind);
+                const res = addExpense(transaction.user, transaction.date, transaction.details, transaction.amount, transaction.kind);
                 console.log(res);
                 toast.current.show({ severity: "success", summary: "توجه", detail: "مصرف موفقانه اضعافه شد", life: 3000 });
             } else {
@@ -101,14 +104,15 @@ function Expenses() {
                 });
             }
         }
+        setSubmitted(false);
         setTransactionDialog(false);
-        setTransaction({ _id: "", user: "", customer: "", date: "", details: "", amount: "", type: "", kind: "" });
+        setTransaction({ _id: "", user: "", date: "", details: "", amount: "", kind: "" });
     };
 
     const productDialogFooter = (
         <React.Fragment>
             <Button label="لغوه" icon="pi pi-times" className="p-button-text" onClick={hideDialog} />
-            <Button label="ثبت" icon="pi pi-check" className="p-button-text" onClick={saveProduct} />
+            <Button label="ثبت" icon={submitted ? "pi pi-spin pi-spinner" : "pi pi-check"} disabled={submitted} className="p-button-text" onClick={saveProduct} />
         </React.Fragment>
     );
 
@@ -135,25 +139,14 @@ function Expenses() {
         );
     };
 
-    const exportCSV = () => {
-        dt.current.exportCSV();
-    };
-
     const rightToolbarTemplate = () => {
         return (
             <TableExports
                 cols={[
-                    { field: "customer.name", header: "Name" },
                     { field: "date", header: "date" },
                     { field: "details", header: "details" },
-                    { field: "drive", header: "drive" },
-                    { field: "palit", header: "palit" },
-                    { field: "page", header: "page" },
-                    { field: "fuel_type", header: "fuel_type" },
-                    { field: "tone_quantity", header: "tone_quantity" },
-                    { field: "unit_price", header: "unit_price" },
-                    { field: "t_type", header: "t_type" },
-                    { field: "fuel_type", header: "fuel_type" },
+                    { field: "amount", header: "drive" },
+                    { field: "kind", header: "palit" },
                 ]}
                 data={allExpense}
                 dt={dt}

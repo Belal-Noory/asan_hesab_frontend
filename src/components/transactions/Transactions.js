@@ -51,17 +51,19 @@ function Transactions() {
 
     // call customer context to run get all customers function to fetch customers from database
     useEffect(() => {
-        getTransactions();
-        getCustomers();
-        setLoading1(false);
-
+        const getAllCustomers = async () => {
+            await getTransactions();
+            await getCustomers();
+            setloader(false);
+        };
+        getAllCustomers();
         let temp = [];
         allTransactions.map((filterd, index) => {
             temp.push(filterd.drive);
         });
         var unique = temp.filter((v, i, a) => a.indexOf(v) === i);
         setdrivers(unique);
-        setloader(false);
+        setLoading1(false);
     }, [editTransaction, deleteTransaction, addTransaction]);
 
     const clearFilter1 = () => {
@@ -138,7 +140,22 @@ function Transactions() {
     };
 
     const confirmDeleteProduct = (customer) => {
-        setTransaction(customer);
+        setTransaction((prevT) => ({
+            ...prevT,
+            _id: customer._id,
+            user: customer.user,
+            customer: customer.customer.name,
+            date: customer.date,
+            details: customer.details,
+            tone_quantity: customer.tone_quantity,
+            fuel_type: customer.fuel_type,
+            unit_price: customer.unit_price,
+            t_type: customer.t_type,
+            driver: customer.drive,
+            palit: customer.palit,
+            page: customer.page,
+            status: customer.status,
+        }));
         setDeleteProductDialog(true);
     };
 
@@ -159,7 +176,7 @@ function Transactions() {
 
     const deleteProductDialogFooter = (
         <React.Fragment>
-            <Button label="نخیر" icon="pi pi-times" className="p-button-text" onClick={hideDeleteProductDialog} />
+            <Button label="نخیر" icon="pi pi-times" className="p-button-text" onClick={() => setDeleteProductDialog(false)} />
             <Button label="بلی" icon="pi pi-check" className="p-button-text" onClick={deleteProduct} />
         </React.Fragment>
     );
@@ -356,7 +373,7 @@ function Transactions() {
                     </Dialog>
 
                     {/* delete confirmation dialogue */}
-                    <Dialog visible={deleteProductDialog} className="text-right" style={{ width: "450px" }} header="موفق هیتید؟" modal footer={deleteProductDialogFooter} onHide={hideDeleteProductDialog}>
+                    <Dialog visible={deleteProductDialog} className="text-right" style={{ width: "450px" }} header="موفق هستید؟" modal footer={deleteProductDialogFooter} onHide={hideDeleteProductDialog}>
                         <div className="confirmation-content">
                             <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: "2rem" }} />
                             {transaction && <span>آیا مطمین هستید؟</span>}

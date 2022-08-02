@@ -34,9 +34,11 @@ function Staffs() {
 
     // call customer context to run get all customers function to fetch customers from database
     useEffect(() => {
-        getStaffs();
-        // eslint-disable-next-line
-        setloader(false);
+        const getData = async () => {
+            await getStaffs();
+            setloader(false);
+        };
+        getData();
     }, [addStaff]);
 
     const openNew = () => {
@@ -197,6 +199,7 @@ function Staffs() {
                         className="text-right"
                         size="small"
                         scrollHeight="460px"
+                        loading={loader}
                     >
                         <Column selectionMode="multiple" exportable={false} className="text-right"></Column>
                         <Column field="name" header="کارمند" sortable className="text-right"></Column>

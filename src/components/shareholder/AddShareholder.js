@@ -24,7 +24,6 @@ function AddShareholder() {
 
     // onchange of inputs
     const setHolder = (e) => {
-        console.log(e.target);
         setsingleHolder({ ...singleHolder, [e.target.name]: e.target.value });
     };
 

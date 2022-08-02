@@ -27,8 +27,11 @@ function DeletedStaffs() {
 
     // call customer context to run get all customers function to fetch customers from database
     useEffect(() => {
-        getDeletedStaff();
-        setloader(false);
+        const getData = async () => {
+            await getDeletedStaff();
+            setloader(false);
+        };
+        getData();
     }, [undoDeletedCustomer]);
 
     const hideDeleteProductDialog = () => {

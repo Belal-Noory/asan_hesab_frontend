@@ -56,10 +56,13 @@ const Dashboard = () => {
 
     // load all transactions
     useEffect(() => {
-        getTransactions();
-        getWithdraws();
-        getCustomers();
-        setloader(false);
+        const getData = async () => {
+            await getTransactions();
+            await getWithdraws();
+            await getCustomers();
+            setloader(false);
+        };
+        getData();
     }, []);
 
     useEffect(() => {

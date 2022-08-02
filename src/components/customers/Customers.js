@@ -33,9 +33,12 @@ function Customers() {
 
     // call customer context to run get all customers function to fetch customers from database
     useEffect(() => {
-        getCustomers();
-        // eslint-disable-next-line
-        setloader(false);
+        const getData = async () => {
+            await getCustomers();
+            // eslint-disable-next-line
+            setloader(false);
+        };
+        getData();
     }, []);
 
     const openNew = () => {
@@ -201,6 +204,7 @@ function Customers() {
                         className="text-right"
                         size="small"
                         scrollHeight="460px"
+                        loading={loader}
                     >
                         <Column selectionMode="multiple" exportable={false} className="text-right"></Column>
                         <Column field="name" header="مشتری" sortable className="text-right"></Column>

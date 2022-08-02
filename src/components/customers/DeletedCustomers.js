@@ -28,8 +28,11 @@ function DeletedCustomers() {
 
     // call customer context to run get all customers function to fetch customers from database
     useEffect(() => {
-        getDeletedCustomers();
-        setloader(false);
+        const getData = async () => {
+            await getDeletedCustomers();
+            setloader(false);
+        };
+        getData();
     }, [undoDeletedCustomer]);
 
     const hideDeleteProductDialog = () => {
@@ -106,6 +109,7 @@ function DeletedCustomers() {
                         className="text-right"
                         size="small"
                         scrollHeight="460px"
+                        loading={loader}
                     >
                         <Column field="name" header="مشتری" sortable className="text-right"></Column>
                         <Column field="phone" header="شماره تماس" sortable className="text-right"></Column>

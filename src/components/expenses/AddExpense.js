@@ -49,9 +49,6 @@ function AddExpense() {
                 for (let i = 0; i < erros.length; i++) {
                     let textbox = "";
                     switch (erros[i].param) {
-                        case "customer":
-                            textbox = "اسم کارمند";
-                            break;
                         case "details":
                             textbox = "تفصیلات";
                             break;
