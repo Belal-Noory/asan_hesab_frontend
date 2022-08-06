@@ -147,10 +147,13 @@ const Dashboard = () => {
         let debets = 0;
         let credits = 0;
         allTransactions.forEach((element) => {
-            if (element.t_type === "باقی شرکت") {
-                debets += element.unit_price * element.tone_quantity;
-            } else {
-                credits += element.unit_price * element.tone_quantity;
+            if(("unit_price" in element))
+            {
+                if (element.t_type === "باقی شرکت") {
+                    debets += element.unit_price * element.tone_quantity;
+                } else {
+                    credits += element.unit_price * element.tone_quantity;
+                }
             }
         });
         setTotalCredits(credits);
@@ -182,8 +185,26 @@ const Dashboard = () => {
         return total;
     };
 
+    const calculateCustomerTotalReceive = (id, type) => {
+        let total = 0;
+        allTransactions.forEach((filter1) => {
+            if (!("tone_quantity" in filter1)) {
+                if(filter1.type === type && filter1.customer._id === id)
+                {
+                    total += filter1.amount;
+                }
+            }
+        });
+        return total;
+    };
+
     const calculatTotal = (rowData) => {
-        return rowData.unit_price * rowData.tone_quantity;
+        if (("tone_quantity" in rowData)) {
+            return rowData.unit_price * rowData.tone_quantity;
+        }
+        else {
+            return rowData.amount;
+        }
     };
 
     const formatDate = (rowData) => {
@@ -193,14 +214,22 @@ const Dashboard = () => {
     const footerTemplate = (data) => {
         return (
             <React.Fragment>
-                <td colSpan="4" style={{ textAlign: "right", backgroundColor: "lightgray" }}>
+                <td colSpan="2" style={{ textAlign: "right", backgroundColor: "lightgray" }}>
                     مجموعه طلبات
                 </td>
                 <td style={{ backgroundColor: "lightgray" }}>{calculateCustomerTotal(data.customer._id, "طلب شرکت")}</td>
-                <td colSpan="5" style={{ textAlign: "right", backgroundColor: "lightgray" }}>
+                <td colSpan="2" style={{ textAlign: "right", backgroundColor: "lightgray" }}>
                     مجموعه باقیات
                 </td>
                 <td style={{ backgroundColor: "lightgray" }}>{calculateCustomerTotal(data.customer._id, "باقی شرکت")}</td>
+                <td colSpan="2" style={{ textAlign: "right", backgroundColor: "lightgray" }}>
+                    رسید دالری
+                </td>
+                <td style={{ backgroundColor: "lightgray" }}>{calculateCustomerTotalReceive(data.customer._id, "دالر")}</td>
+                <td colSpan="2" style={{ textAlign: "right", backgroundColor: "lightgray" }}>
+                    رسید افغانی
+                </td>
+                <td style={{ backgroundColor: "lightgray" }}>{calculateCustomerTotalReceive(data.customer._id, "افغانی")}</td>
             </React.Fragment>
         );
     };

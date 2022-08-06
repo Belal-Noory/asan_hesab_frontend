@@ -15,7 +15,7 @@ function AddTransaction() {
     const customerData = useContext(customerContext);
 
     // get just add customer context
-    const { addTransaction, getTransactions, allTransactions } = transactionData;
+    const { addTransaction, getTransactions, allTransactions,addReceive } = transactionData;
     const { allCustomers, getCustomers, addCustomer } = customerData;
     const toast = useRef(null);
 
@@ -31,6 +31,15 @@ function AddTransaction() {
         driver: "",
         palit: "",
         page: "",
+    });
+
+    // Create state for a single receive to add
+    const [receive, setReceive] = useState({
+        customer: "",
+        date: "",
+        details: "",
+        amount: 0,
+        type: ""
     });
 
     // get all drivers
@@ -105,6 +114,59 @@ function AddTransaction() {
         }
     };
 
+     // function to add/save receive
+     const saveReceive = async (e) => {
+        if (!Object.values(receive).every((x) => x === null || x === "")) {
+            setSpinner(true);
+            let cas = await addReceive(receive.customer, receive.date, receive.amount, receive.details, receive.type);
+            if (!("errors" in cas)) {
+                toast.current.show({
+                    severity: "success",
+                    summary: "درج رسید",
+                    detail: "رسید شما موفقانه درج سیستم شد",
+                });
+                receive.customer = "";
+                receive.date = "";
+                receive.amount = 0;
+                receive.details = "";
+                setSpinner(false);
+            } else {
+                const erros = cas.errors;
+                const result = Array();
+                for (let i = 0; i < erros.length; i++) {
+                    let textbox = "";
+                    switch (erros[i].param) {
+                        case "customer":
+                            textbox = "اسم مشری";
+                            break;
+                        case "details":
+                            textbox = "تفصیلات";
+                            break;
+                        case "amount":
+                            textbox = "مقدار پول";
+                            break;
+                        default:
+                            break;
+                    }
+                    result.push({
+                        severity: "error",
+                        summary: textbox,
+                        detail: erros[i].msg,
+                    });
+                }
+                toast.current.show(result);
+                setSpinner(false);
+            }
+        } else {
+            setSpinner(false);
+            toast.current.show({
+                severity: "error",
+                summary: "خطا",
+                detail: "لطفآ تمام معلومات را درست خانه پوری نمایدن.",
+            });
+        }
+    };
+
     useEffect(() => {
         getCustomers();
         getTransactions();
@@ -121,9 +183,14 @@ function AddTransaction() {
         setTransaction({ ...transaction, [e.target.name]: e.target.value });
     };
 
+    // update single receive
+    const setReceiveValue = (e) => {
+        setReceive({ ...receive, [e.target.name]: e.target.value });
+    };
+
     return (
         <div className="grid">
-            <div className="col-12" dir="rtl">
+            <div className="col-12 md:col-6" dir="rtl">
                 <Card className="card p-fluid" title="حساب جدید">
                     <div className="p-fluid grid">
                         <div className="field col-12 md:col-4" dir="ltr">
@@ -201,6 +268,48 @@ function AddTransaction() {
                             </span>
                         </div>
                         <Button label="ثبت معامله" loading={Spinner} onClick={saveTransaction} />
+                    </div>
+                </Card>
+            </div>
+
+            <div className="col-12 md:col-6" dir="rtl">
+                <Card className="card p-fluid" title="رسید جدید">
+                    <div className="p-fluid grid">
+                        <div className="field col-12 md:col-6" dir="ltr">
+                            <span className="p-float-label">
+                                <Dropdown value={receive.customer} optionValue="_id" options={allCustomers} optionLabel="name" onChange={setReceiveValue} name="customer" id="customer" inputId="customer" filter required />
+                                <label htmlFor="customer">مشتری</label>
+                            </span>
+                        </div>
+
+                        <div className="field col-12 md:col-6">
+                            <span className="p-float-label">
+                                <Calendar value={receive.date} onChange={setReceiveValue} name="date" id="date" required></Calendar>
+                                <label htmlFor="date">تاریخ</label>
+                            </span>
+                        </div>
+
+                        <div className="field col-12 md:col-6">
+                            <span className="p-float-label">
+                                <InputText type="number" value={receive.amount} onChange={setReceiveValue} name="amount" id="amount" required />
+                                <label htmlFor="amount">مقدار پول</label>
+                            </span>
+                        </div>
+
+                        <div className="field col-12 md:col-6" dir="ltr">
+                            <span className="p-float-label">
+                                <Dropdown value={receive.type} optionValue="name" options={[{ name: "دالر" }, { name: "افغانی" }]} optionLabel="name" onChange={setReceiveValue} name="type" id="type" filter required />
+                                <label htmlFor="type">نوعیت پول</label>
+                            </span>
+                        </div>
+
+                        <div className="field col-12 md:col-12">
+                            <span className="p-float-label">
+                                <InputTextarea cols={30} value={receive.details} onChange={setReceiveValue} name="details" id="details" required />
+                                <label htmlFor="details">تفصیلات</label>
+                            </span>
+                        </div>
+                        <Button label="ثبت رسید" loading={Spinner} onClick={saveReceive} />
                     </div>
                 </Card>
             </div>

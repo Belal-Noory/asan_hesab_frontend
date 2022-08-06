@@ -188,9 +188,9 @@ const App = () => {
         {
             label: "حسابات",
             items: [
-                { label: "حساب جدید", icon: "pi pi-fw pi-plus", to: "/transactions/new" },
-                { label: "لیست حسابات", icon: "pi pi-fw pi-chart-bar", to: "/transactions" },
-                { label: "لیست حساب های حذف شده", icon: "pi pi-fw pi-trash", to: "/transactions/deleted" },
+                { label: "حساب/رسید جدید", icon: "pi pi-fw pi-plus", to: "/transactions/new" },
+                { label: "لیست حسابات/رسیدها", icon: "pi pi-fw pi-chart-bar", to: "/transactions" },
+                { label: "لیست حسابات/رسیدها حذف شده", icon: "pi pi-fw pi-trash", to: "/transactions/deleted" },
             ],
         },
         {

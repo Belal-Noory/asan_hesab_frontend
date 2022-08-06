@@ -78,6 +78,32 @@ const TransactionState = (props) => {
         return newTransaction;
     };
 
+    // Add Receive
+    const addReceive = async (customer, date, amount, details,type) => {
+        // call API to add the customer to the database
+        const response = await fetch(`${host}/receive/add`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "auth-token": toekn,
+            },
+            body: JSON.stringify({
+                customer: customer,
+                date: date,
+                amount: amount,
+                details: details,
+                type: type
+            }),
+        });
+        // if no error fecth the data
+        const newTransaction = await response.json();
+        if (!("errors" in newTransaction)) {
+            // update the all customers list
+            setallTransactions(allTransactions.concat(newTransaction));
+        }
+        return newTransaction;
+    };
+
     // Delete Customer
     const deleteTransaction = async (id) => {
         // call API to add the customer to the database
@@ -172,6 +198,7 @@ const TransactionState = (props) => {
                 getTransactions,
                 getDeletedTransactions,
                 undoDeletedTransaction,
+                addReceive
             }}
         >
             {props.children}
